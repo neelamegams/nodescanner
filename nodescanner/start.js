@@ -11,7 +11,7 @@ const deviceDetector = new DeviceDetector({
 const clientHints = new ClientHints;
 
 const app = express();
-const port = 3001;
+let port = 3000;
 let os = [];
 
 const hasBotResult = (result) => {
@@ -73,6 +73,7 @@ app.get('/image', (req, res) => {
   res.sendFile(__dirname + '/thankyou.jpeg');
 });
 
+app.set('port', process.env.PORT || 8080);
 app.listen(port, () => {
   console.log('server listen port %s', port);
 })
