@@ -3,8 +3,8 @@ applications:
 - name: nodescanner
   description: Build Apps demo
   version: 1.0.0
-  random-route: true
   path: nodescanner
   memory: 512MB
+  timeout: 180
   buildpacks:
   - nodejs_buildpack
