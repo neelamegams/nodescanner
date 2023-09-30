@@ -1,6 +1,8 @@
 const express = require('express');
 const DeviceDetector = require('node-device-detector');
 const ClientHints = require('node-device-detector/client-hints')
+const cors = require('cors');
+const short = require('shortid');
 
 // init app
 const deviceDetector = new DeviceDetector({
@@ -9,9 +11,9 @@ const deviceDetector = new DeviceDetector({
   deviceAliasCode: false,
 });
 const clientHints = new ClientHints;
-
 const app = express();
 let os = [];
+var count = 0;
 
 const hasBotResult = (result) => {
   return result && result.name;
@@ -30,6 +32,8 @@ const middlewareDetect = (req, res, next) => {
 
 // attach middleware
 app.use(middlewareDetect);
+
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
@@ -52,9 +56,11 @@ app.post('/done', (req, res) => {
   //res.send(JSON.stringify({useragent, detectResult, botResult, isBot: hasBotResult(botResult)}));
   //console.log(JSON.stringify({useragent, detectResult, botResult, isBot: hasBotResult(botResult)}));
   //res.send(detectResult["os"].name);
-  os.push(detectResult["os"].name);
+  count++;
+  os.push({"visitorId": short(), "deviceName": detectResult["os"].name, "count": count});
   console.log("pushing to OS array", os);
   res.sendFile(__dirname + '/thankyou.jpeg');
+
 });
 
 app.get('/api', (req, res) => {
@@ -75,7 +81,7 @@ app.get('/image', (req, res) => {
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log('server listen port %s', port);
-})
+});
 
 //------1st------
 // const express = require('express');
