@@ -2,7 +2,8 @@ const express = require('express');
 const DeviceDetector = require('node-device-detector');
 const ClientHints = require('node-device-detector/client-hints')
 const cors = require('cors');
-const short = require('shortid');
+const { nanoid }  = require('nanoid')
+const allplayersjson = require('./players_fullset.json');
 
 // init app
 const deviceDetector = new DeviceDetector({
@@ -39,25 +40,25 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-// // create test route
-// app.get('/', (req, res) => {
-//    let useragent = req.useragent;
-//    let detectResult = req.device;
-//    let botResult = req.bot;
-//    //res.send(JSON.stringify({useragent, detectResult, botResult, isBot: hasBotResult(botResult)}));
-//    console.log(JSON.stringify({useragent, detectResult, botResult, isBot: hasBotResult(botResult)}));
-//    res.send(detectResult["os"].name);
-// })
+app.get('/colors', (req, res) => {
+  res.sendFile(__dirname + '/colors.html');
+});
+
+
 
 app.post('/done', (req, res) => {
   let useragent = req.useragent;
-  let detectResult = req.device;
   let botResult = req.bot;
+  let detectResult = req.device;
+  let osName = detectResult["os"].name || "automatedOS";
+  let clientName = detectResult["client"].type + ":" + detectResult["client"].name || "automatedClient";
+  let deviceName = detectResult["device"].brand + ":" + detectResult["device"].model || "automatedDevice";
   //res.send(JSON.stringify({useragent, detectResult, botResult, isBot: hasBotResult(botResult)}));
   //console.log(JSON.stringify({useragent, detectResult, botResult, isBot: hasBotResult(botResult)}));
   //res.send(detectResult["os"].name);
+  console.log(clientName + " - " + deviceName);
   count++;
-  os.push({"visitorId": short(), "deviceName": detectResult["os"].name, "count": count});
+  os.push({"visitorId": nanoid(5), "osName": osName, "count": count});
   console.log("pushing to OS array", os);
   res.sendFile(__dirname + '/thankyou.jpeg');
 
@@ -67,6 +68,16 @@ app.get('/api', (req, res) => {
   console.log("showing from OS array", os);
   res.json(os);
 });
+
+app.get('/players', (req, res) => {
+  var numentries = req.query.top;
+  var playersjson = allplayersjson;
+  if(numentries){
+    playersjson = [];
+    playersjson = allplayersjson.slice(0, numentries);
+  }
+  res.json(playersjson);
+})
 
 app.get('/reset', (req, res) => {
   os = [];

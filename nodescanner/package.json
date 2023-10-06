@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "scripts": {
     "start": "node start.js"
@@ -14,7 +14,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "node-device-detector": "^2.0.16",
-    "shortid": "^2.2.16"
+    "nanoid": "^3.3.6",
+    "node-device-detector": "^2.0.16"
   }
 }
