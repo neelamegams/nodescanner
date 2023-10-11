@@ -69,15 +69,62 @@ app.get('/api', (req, res) => {
   res.json(os);
 });
 
+//https://buildgame.cfapps.eu11.hana.ondemand.com/players?country_name=India&fullname=Kuldeep Singh
+function getPlayerByCountryAndFullname(playerCountryParam, playerFullnameParam){
+  let matched = false;
+  let matchedPlayer = [];
+  allplayersjson.forEach((element) => {
+    player_country = element.country_name; 
+    player_fullname = element.fullname;
+    if (player_country == playerCountryParam & player_fullname == playerFullnameParam) {
+      console.log(element);
+      matchedPlayer.push(element);
+    }
+  });
+  return matchedPlayer;
+}
+
 app.get('/players', (req, res) => {
-  var numentries = req.query.top;
+  var topentries = req.query.top;
+  var country_name = req.query.country_name;
+  var fullname = req.query.fullname;
   var playersjson = allplayersjson;
-  if(numentries){
+  
+  if(topentries){
     playersjson = [];
-    playersjson = allplayersjson.slice(0, numentries);
+    playersjson = allplayersjson.slice(0, topentries); //return only the sliced players if top is provided
   }
-  res.json(playersjson);
+
+  if(country_name != undefined && fullname != undefined){
+    playersjson = [];
+    playersjson = getPlayerByCountryAndFullname(country_name, fullname);
+  }
+
+  res.json(playersjson); //return all players if "top" is not provided
 })
+
+function getPlayerById(playerID){
+  let matched = false;
+  let matchedPlayer = [];
+  allplayersjson.forEach((element) => {
+    player_id = element.id; 
+    if (player_id == playerID & !matched) {
+      console.log(element);
+      matched = true;
+      matchedPlayer.push(element);
+    }
+  });
+  return matchedPlayer;
+}
+
+
+app.get('/players/:playerid', (req, res) => {
+  const playerDetails = getPlayerById(req.params.playerid);
+  console.log(playerDetails);
+  res.json(playerDetails);
+});
+
+
 
 app.get('/reset', (req, res) => {
   os = [];

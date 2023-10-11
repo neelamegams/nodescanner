@@ -1,6 +1,6 @@
 ---
 applications:
-- name: nodescanner
+- name: buildgame
   description: Build Apps demo
   version: 1.0.0
   path: nodescanner
